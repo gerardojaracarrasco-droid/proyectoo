@@ -1,21 +1,21 @@
+require('dotenv').config();
+
 const express = require('express');
+const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 
 const app = express();
 
-// guardar archivo en memoria, suficiente para este reto
-const upload = multer({ storage: multer.memoryStorage() });
-
-// archivos estáticos opcionales
+app.use(cors());
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-// ruta principal
+const upload = multer({ storage: multer.memoryStorage() });
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
-// ruta del reto
 app.post('/api/fileanalyse', upload.single('upfile'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
@@ -28,7 +28,6 @@ app.post('/api/fileanalyse', upload.single('upfile'), (req, res) => {
   });
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log('Server running on port ' + port);
+const listener = app.listen(process.env.PORT || 3000, () => {
+  console.log('Your app is listening on port ' + listener.address().port);
 });
